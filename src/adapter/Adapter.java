@@ -1,0 +1,178 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package adapter;
+
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+
+import model.Lista_Alumnos;
+import model.Alumno;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+public class Adapter {
+
+    static int carnet;
+    static String nombres;
+    static String apellidos;
+    static String correo;
+    static int opcion = 0;
+
+    static Scanner scn = new Scanner(System.in);
+    static ArrayList<Alumno> listaAlumno = new ArrayList();
+
+    static Alumno alumno;
+
+    public static void main(String[] args) {
+        menu();
+    }
+    
+        public static void Json(ArrayList<Alumno> listaAlumno){
+        
+        JSONObject obj = new JSONObject();
+        JSONArray array = new JSONArray();
+        
+        for(int i = 0 ; i < listaAlumno.size() ; i++){
+            
+            JSONObject obj1 = new JSONObject();
+            obj1.put("carnet", listaAlumno.get(i).getCarnet());
+            obj1.put("Nombre", listaAlumno.get(i).getNombres());
+            obj1.put("Apellido", listaAlumno.get(i).getApellidos());
+            obj1.put("Correo", listaAlumno.get(i).getCorreo());
+            array.add(obj1);
+        }
+        
+        obj.put("Nombres", array);
+        
+        System.out.println(obj);
+        
+   
+    }
+
+    public static void listObjectTOXML(Lista_Alumnos listaAlumnos) {
+        try {
+
+            JAXBContext jaxbContext = JAXBContext.newInstance(Lista_Alumnos.class);
+
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+            StringWriter sw = new StringWriter();
+
+            jaxbMarshaller.marshal(listaAlumnos, sw);
+
+            String xmlData = sw.toString();
+
+            System.out.println(xmlData);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+    }
+    
+      public static void menu() {
+        do {
+
+            System.out.println(" ");
+            System.out.println("\t ---Menú para registrar datos---");
+            System.out.println("\t --------Elija una opcion-------");
+            System.out.println("1. Ingresar datos Alumnos");
+            System.out.println("2. Mostrar datos en XML");
+            System.out.println("3. Mostrar datos en JSON");
+            System.out.println("4. Salir");
+            System.out.print("--Opción:");
+            opcion = scn.nextInt();
+            
+
+            switch (opcion) {
+
+                case 1:
+
+                    agregarAlumno();
+
+                    break;
+
+                case 2:
+
+                    System.out.println("\t---Datos XML---");
+                    objectToXML(alumno);
+                    //listObjectTOXML(listaAlumno);
+
+                    break;
+
+                case 3:
+
+                    System.out.println("\t---Datos JSON---");
+                    Json(listaAlumno);
+
+            }
+
+        } while (opcion != 4);
+    }
+
+    public static void agregarAlumno() {
+
+        System.out.println("Por favor ingrese sus datos:");
+
+        System.out.println("   Ingrese carnet: ");
+        carnet = scn.nextInt();
+
+        System.out.println("   Ingrese su primer nombre: ");
+        nombres = scn.next();
+
+        System.out.println("   Ingrese su primer apellido: ");
+        apellidos = scn.next();
+
+        System.out.println("   Ingrese su correo electronico: ");
+        correo = scn.next();
+
+        alumno = new Alumno(carnet, nombres, apellidos, correo);
+        listaAlumno.add(alumno);
+
+        menu();
+    }
+
+  
+
+    public static void objectToXML(Alumno alumno) {
+
+        try {
+
+            JAXBContext jaxbContext = JAXBContext.newInstance(Alumno.class);
+
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+            StringWriter sw = new StringWriter();
+
+            jaxbMarshaller.marshal(alumno, sw);
+
+            String xmlData = sw.toString();
+
+            System.out.println(xmlData);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
+    }
+    
+
+    
+    
+
+}
